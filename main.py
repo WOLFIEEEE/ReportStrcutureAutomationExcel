@@ -112,6 +112,7 @@ def addformulaanddata(execution_sheet , row_name , formula_name , row_number):
     # change the cell value
     cell.value = row_name
     cell.style = "cell_style"
+    cell.hyperlink = "#" + formula_name + "!A1"
     addformulasonrow(execution_sheet , row_number , formula_name)
     
 
@@ -142,7 +143,11 @@ def main(Filename , workbook2):
         new_column_letter = column_utils.get_column_letter(col_index)
         # Traverse the column and create sheets
         row_number_es = 4
+        skip_first_row = True
         for cell in sheet[column_letter]:
+            if skip_first_row:
+                skip_first_row = False
+                continue
             row_number = cell.row
             cell2 = sheet['{}{}'.format(new_column_letter, row_number)]
             

@@ -52,7 +52,7 @@ def open_file():
                     column_arr.append('E')
         
             # delete_whole_column_letter(column_arr)
-            main(file_path)
+            main(file_path , workbook2)
 
             # enable the process button and show completed message
             process_button.config(state="normal", text="Completed")
