@@ -2,7 +2,7 @@ import openpyxl
 import openpyxl
 from openpyxl.styles import NamedStyle, Alignment, Font, PatternFill, Border, Side
 import openpyxl.utils.cell as column_utils
-
+import re
 # open the workbook
 
 
@@ -114,9 +114,32 @@ def addformulaanddata(execution_sheet , row_name , formula_name , row_number):
     cell.style = "cell_style"
     cell.hyperlink = "#" + formula_name + "!A1"
     addformulasonrow(execution_sheet , row_number , formula_name)
-    
 
-def main(Filename , workbook2):
+def is_valid_sheet_name(sheet_name):
+    """
+    Checks if a given text can be used as a valid Excel sheet name according to
+    the constraints specified by Microsoft Excel.
+    """
+    if len(sheet_name) > 31:
+        # Sheet name must be no longer than 31 characters
+        return False
+    elif re.search(r'[\/\*\[\]\:\?\"]', sheet_name):
+        # Sheet name cannot contain any of the following characters: / \ * [ ] : ? "
+        return False
+    elif sheet_name.startswith("'") or sheet_name.endswith("'"):
+        # Sheet name cannot begin or end with an apostrophe (')
+        return False
+    elif sheet_name == ' ' or sheet_name == '':
+        # Sheet name cannot be blank or consist solely of spaces
+        return False
+    else:
+        return True
+
+
+def change_sheet_name(workbook, sheet_name, new_sheet_name):
+
+    return 1
+def main_main(Filename , workbook2):
     # Load the workbook
     addstyles(workbook2)
     workbook = openpyxl.load_workbook(filename=Filename)
@@ -152,6 +175,10 @@ def main(Filename , workbook2):
             cell2 = sheet['{}{}'.format(new_column_letter, row_number)]
             
             row_name = cell2.value;
+            if(is_valid_sheet_name(cell.value) == False):
+                # cell.value = show_error_dialog("Sheet Name " + cell.value + " is not valid")
+                print("Invalid Sheet Name")
+                print(cell.value)
             formula_sheet_name = cell.value;
             print("row_name = " + row_name)
             print("formula_sheet_name = " + formula_sheet_name)
@@ -162,24 +189,6 @@ def main(Filename , workbook2):
 
         add_styles_to_pending_cells(execution_sheet , 'B' , know_the_Columns(execution_sheet , 'Level A') , 4 , row_number_es-1)
 
-
-from openpyxl.utils import column_index_from_string, get_column_letter
-
-def delete_whole_column_letter(columns):
-    workbook2 = openpyxl.load_workbook('Boilerplate.xlsx')
-    sheet = workbook2['Execution Summary']
-    deleted_indexes = []
-    for col in columns:
-        col_index = column_index_from_string(col)
-        sheet.delete_cols(col_index, 1)
-        deleted_indexes.append(col_index)
-    # Update remaining column letters
-    for cell in sheet.iter_cols(min_row=1, min_col=min(deleted_indexes), max_col=max(deleted_indexes)):
-        new_col_index = column_index_from_string(cell[0].column_letter) - len(deleted_indexes)
-        print(f"new_col_index: {new_col_index}")  # add this line
-        new_col_letter = get_column_letter(new_col_index)
-        for c in cell:
-            c.column_letter = new_col_letter
 
 # def delete_whole_column_letter(arr):
 #     workbook2 = openpyxl.load_workbook('Boilerplate.xlsx')
